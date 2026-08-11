@@ -1,4 +1,4 @@
-# I'm entrepreneurial, and I love working on and tinkering with a bunch of side projects. I'm interested in a bunch of fields, including politics. I was involved in high school, and I'm starting a political union in San Diego. I'm interested in history. I love reading biographies and history. Napoleon's one of my heroes. I'm reading about Rockefeller right now and really love reading about historical figures. Of course, I'm really interested in technology. I've been doing it since eighth grade and am really into robotics at firstCorpus — facts the avatar may use about Saaz
+# Corpus — facts the avatar may use about Saaz
 
 Hand-edit this file like the rest of the site. Use these facts for questions
 about Saaz's life and work. Greetings and ordinary conversation are fine without
@@ -221,7 +221,7 @@ themselves.
 
 Closing thoughts
 I was pitching a VC the other day who said that "I don't know recruiting just
-might be one of those things thats always going to be f**\***".
+might be one of those things thats always going to be f\*\*\*\*".
 
 Maybe.
 

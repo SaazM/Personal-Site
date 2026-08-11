@@ -126,6 +126,38 @@ let analyser = null;
 let timeData = null;
 let freqData = null;
 let sourceEl = null;
+// One shared element, unlocked on a user gesture — required for iOS/Safari
+// after the async /api/ask round-trip (autoplay policy).
+let sharedAudio = null;
+let audioUnlocked = false;
+
+function unlockAudio() {
+  try {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    audioCtx.resume();
+  } catch {
+    /* ignore */
+  }
+  if (audioUnlocked) return;
+  try {
+    if (!sharedAudio) sharedAudio = new Audio();
+    // Tiny silent wav — primes playback permission under the tap gesture.
+    sharedAudio.src =
+      "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=";
+    const p = sharedAudio.play();
+    if (p?.then) {
+      p.then(() => {
+        sharedAudio.pause();
+        sharedAudio.currentTime = 0;
+        audioUnlocked = true;
+      }).catch(() => {});
+    } else {
+      audioUnlocked = true;
+    }
+  } catch {
+    /* ignore */
+  }
+}
 
 function attachAnalyser(audioEl) {
   if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -281,6 +313,7 @@ form.addEventListener("submit", async (e) => {
   busy = true;
   let answered = false;
   input.value = "";
+  unlockAudio();
   try { recognition?.stop(); } catch {} // pause the mic; convo mode re-arms after the reply
   addLine("you", `you: ${q}`);
   const answerEl = addLine("me", "");
@@ -353,7 +386,11 @@ form.addEventListener("submit", async (e) => {
     setState("idle");
     if (answered) smileFlash();
     busy = false;
-    if (convo) restartListen(500); // hands-free: go straight back to listening
+    if (convo) {
+      // iOS won't let SpeechRecognition.start() after an async gap — ask for a tap.
+      if (needsListenGesture) armListenGesture();
+      else restartListen(500);
+    }
   }
 });
 
@@ -365,25 +402,32 @@ function speak(done) {
   }
   return new Promise((resolve) => {
     const url = `/api/tts?text=${encodeURIComponent(done.text)}&sig=${done.sig}`;
-    const audio = new Audio();
+    const audio = sharedAudio || new Audio();
+    sharedAudio = audio;
     audio.src = url;
-    let fellBack = false;
+    let settled = false;
+    const finish = () => {
+      if (settled) return;
+      settled = true;
+      resolve();
+    };
     const fallback = () => {
-      if (fellBack) return;
-      fellBack = true;
+      if (settled) return;
+      settled = true;
       speakWithoutAudio(done.text).then(resolve);
     };
-    audio.addEventListener("error", fallback);
-    audio.addEventListener("ended", () => resolve());
-    audio.addEventListener("playing", () => {
+    audio.onerror = fallback;
+    audio.onended = finish;
+    audio.onplaying = () => {
       setState("speaking");
       mouthLoop();
-    });
+    };
     try {
       attachAnalyser(audio);
     } catch {
       analyser = null; // analyser is decoration; keep playing without it
     }
+    if (audioCtx) audioCtx.resume().catch(() => {});
     audio.play().catch(fallback);
   });
 }
@@ -405,12 +449,24 @@ function speakWithoutAudio(text) {
 // Hands-free conversation mode: one click arms the mic, and after each
 // spoken reply it re-arms automatically — talk, listen, talk, no clicking.
 // No vendor "agents" involved; it's a client-side loop around Web Speech.
+// On iOS, recognition.start() must ride a user gesture, so after each reply
+// we ask for another tap instead of auto-restarting.
 
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+const isIOS =
+  /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+  (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+const needsListenGesture = isIOS;
 let recognition = null;
 let convo = false;
 let silentRounds = 0;
 let listenTimer = null;
+let awaitingListenTap = false;
+
+function submitQuestion() {
+  if (typeof form.requestSubmit === "function") form.requestSubmit();
+  else form.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }));
+}
 
 if (SR) {
   micBtn.hidden = false;
@@ -418,20 +474,23 @@ if (SR) {
   recognition.lang = "en-US";
   recognition.interimResults = true;
   recognition.continuous = false;
+  recognition.maxAlternatives = 1;
 
   recognition.addEventListener("result", (e) => {
     const text = [...e.results].map((r) => r[0].transcript).join("");
     input.value = text;
     if (e.results[e.results.length - 1].isFinal) {
       silentRounds = 0;
-      form.requestSubmit();
+      submitQuestion();
     }
   });
 
   // The engine stops itself after a stretch of silence — if we're mid
-  // conversation and not waiting on an answer, just start it again.
+  // conversation and not waiting on an answer, just start it again (desktop).
   recognition.addEventListener("end", () => {
-    if (convo && !busy) restartListen(400);
+    if (!convo || busy) return;
+    if (needsListenGesture) armListenGesture();
+    else restartListen(400);
   });
 
   recognition.addEventListener("error", (e) => {
@@ -439,21 +498,46 @@ if (SR) {
       // several quiet rounds in a row → stand down instead of looping forever
       if (++silentRounds >= 4) stopConvo("still here — hit the button when you want to talk");
     } else if (e.error === "not-allowed" || e.error === "service-not-allowed") {
-      stopConvo("mic blocked — type instead");
+      stopConvo("mic blocked — allow microphone, or type instead");
+    } else if (e.error === "aborted") {
+      // common when we stop() before asking — ignore
+    } else if (needsListenGesture) {
+      armListenGesture();
     }
   });
 
-  micBtn.addEventListener("click", () => (convo ? stopConvo() : startConvo()));
+  micBtn.addEventListener("click", () => {
+    unlockAudio();
+    if (!convo) {
+      startConvo();
+      return;
+    }
+    // Second tap while armed: either resume listening (iOS) or stop.
+    if (awaitingListenTap || state !== "listening") {
+      awaitingListenTap = false;
+      status.textContent = "";
+      listen();
+      return;
+    }
+    stopConvo();
+  });
   addEventListener("keydown", (e) => {
     if (e.key === "Escape") stopConvo();
   });
+} else if (micBtn) {
+  // Show why speak is missing on browsers without Web Speech (some iOS versions).
+  micBtn.hidden = false;
+  micBtn.disabled = true;
+  micBtn.textContent = "speak n/a";
+  micBtn.title = "Voice input isn’t supported in this browser — type instead";
 }
 
-const micLabel = micBtn.textContent;
+const micLabel = "speak";
 
 function startConvo() {
   convo = true;
   silentRounds = 0;
+  awaitingListenTap = false;
   micBtn.textContent = "stop";
   micBtn.setAttribute("aria-pressed", "true");
   listen();
@@ -461,6 +545,7 @@ function startConvo() {
 
 function stopConvo(note = "") {
   convo = false;
+  awaitingListenTap = false;
   clearTimeout(listenTimer);
   micBtn.textContent = micLabel;
   micBtn.setAttribute("aria-pressed", "false");
@@ -469,13 +554,26 @@ function stopConvo(note = "") {
   if (note) status.textContent = note;
 }
 
+function armListenGesture() {
+  awaitingListenTap = true;
+  clearTimeout(listenTimer);
+  if (state === "listening") setState("idle");
+  status.textContent = "tap speak to continue";
+  micBtn.textContent = "speak";
+  micBtn.setAttribute("aria-pressed", "true");
+}
+
 function listen() {
-  if (!convo || busy) return;
+  if (!convo || busy || !recognition) return;
   try {
     recognition.start();
+    awaitingListenTap = false;
+    micBtn.textContent = "stop";
     setState("listening");
+    status.textContent = STATUS_TEXT.listening;
   } catch {
-    // start() throws if the engine is already running — harmless
+    // start() throws if the engine is already running — or if iOS blocks it
+    if (needsListenGesture) armListenGesture();
   }
 }
 
