@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Talk — Saaz Mahadkar</title>
+  <meta name="description" content="Talk to an AI approximation of Saaz Mahadkar.">
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500..600&display=swap">
+  <link rel="stylesheet" href="../styles.css">
+  <style>
+    /* Page-scoped: the face gets the stage, everything else stays quiet. */
+    body.talk {
+      max-width: 46rem;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      padding-top: 1.5rem;
+      padding-bottom: 1.5rem;
+    }
+    #face {
+      width: fit-content;
+      margin: 0.5rem auto 0;
+      font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+      /* font-size set by JS so the 88-col grid fits the viewport */
+      line-height: 1.0;
+      letter-spacing: 0;
+      color: var(--ink);
+      background: none;
+      border: none;
+      padding: 0;
+      user-select: none;
+    }
+    #status {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.875rem;
+      min-height: 1.4rem;
+      margin: 0.5rem 0 0;
+    }
+    #transcript {
+      flex: 1;
+      overflow-y: auto;
+      max-height: 14rem;
+      margin: 1rem 0 0;
+      font-size: 0.9375rem;
+    }
+    #transcript p { margin: 0.5rem 0; }
+    #transcript .you { color: var(--muted); }
+    #ask-row {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--hairline);
+    }
+    #question {
+      flex: 1;
+      font: inherit;
+      color: var(--ink);
+      background: none;
+      border: none;
+      border-bottom: 1px solid var(--hairline);
+      padding: 0.4rem 0.1rem;
+    }
+    #question:focus { outline: none; border-bottom-color: var(--accent); }
+    #ask-row button {
+      font: inherit;
+      font-size: 0.9375rem;
+      color: var(--muted);
+      background: none;
+      border: 1px solid var(--hairline);
+      border-radius: 6px;
+      padding: 0.35rem 0.9rem;
+      cursor: pointer;
+    }
+    #ask-row button:hover { color: var(--accent); border-color: var(--accent); }
+    #mic[aria-pressed="true"] { color: var(--accent); border-color: var(--accent); }
+    .disclaimer {
+      color: var(--muted);
+      font-size: 0.8125rem;
+      margin: 0.75rem 0 0;
+    }
+    @media (max-width: 480px) {
+      #transcript { max-height: 10rem; }
+    }
+  </style>
+</head>
+<body class="talk">
+
+<a class="back" href="../">← Back to home</a>
+
+<main>
+  <pre id="face" aria-label="ASCII rendering of Saaz's face"></pre>
+  <p id="status" aria-live="polite"></p>
+
+  <div id="transcript" aria-live="polite"></div>
+
+  <form id="ask-row">
+    <input id="question" type="text" maxlength="500" autocomplete="off"
+           placeholder="Type a question" aria-label="Your question">
+    <button id="mic" type="button" aria-pressed="false" aria-label="Speak your question"
+            hidden>speak</button>
+    <button type="submit" aria-label="Send typed question">send</button>
+  </form>
+
+  <p class="disclaimer">an AI approximation of me — it can be wrong.
+     The real one: <a href="mailto:saaz.m@icloud.com">saaz.m@icloud.com</a></p>
+</main>
+
+<script type="module" src="talk.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,16 @@
+{
+  "name": "saazm-dev",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build:home": "node scripts/render-home.mjs",
+    "dev": "node scripts/render-home.mjs && node scripts/dev-server.mjs",
+    "favicon": "node scripts/make-favicon.mjs",
+    "frames:placeholder": "node scripts/make-placeholder-frames.mjs",
+    "frames:mouth": "node scripts/regen-mouth.mjs",
+    "frames": "node scripts/make-frames.mjs"
+  },
+  "dependencies": {
+    "openai": "^7.4.0"
+  }
+}

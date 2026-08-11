@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cutting multimodal vision cost 50% with a 5M-param segmentation gate — Saaz Mahadkar</title>
+  <meta name="description" content="How a small PyTorch segmentation model gates multimodal inference over screen recordings at Bridge.">
+  <meta name="robots" content="noindex">
+  <link rel="canonical" href="https://saazm.dev/writeups/segmentation/">
+  <meta property="og:title" content="Cutting multimodal vision cost 50% with a 5M-param segmentation gate">
+  <meta property="og:type" content="article">
+  <link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500..600&display=swap">
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body>
+
+<a class="back" href="../../">← Saaz Mahadkar</a>
+
+<article>
+  <h1>Cutting multimodal vision cost 50% with a 5M-param segmentation gate</h1>
+  <p class="date">[DRAFT — outline only] · <span class="todo">[TODO: publish date]</span></p>
+
+  <p class="draft-note">This is an outline stub. Every section below is a
+     placeholder to be written; nothing here is final prose. Remove the
+     <code>noindex</code> meta tag and this note before publishing.</p>
+
+  <h2>Problem</h2>
+  <p class="draft-note">[DRAFT — outline only] Why sending full screen
+     recordings to a multimodal model is expensive; what Bridge actually
+     needs from each frame; the cost/latency numbers that motivated this.</p>
+
+  <h2>Architecture</h2>
+  <p class="draft-note">[DRAFT — outline only] The 5M-param PyTorch model
+     that segments recordings into UI regions before multimodal inference;
+     where it sits in the pipeline; what "gating" means concretely.</p>
+  <pre><code>[TODO: architecture diagram or pipeline pseudocode]</code></pre>
+
+  <h2>Training data</h2>
+  <p class="draft-note">[DRAFT — outline only] Where the labeled UI-region
+     data came from, how much of it, labeling approach, augmentation.</p>
+
+  <h2>Results</h2>
+  <p class="draft-note">[DRAFT — outline only] Cost and latency before/after.
+     Table placeholder below.</p>
+  <table>
+    <thead>
+      <tr><th>Metric</th><th>Before</th><th>After</th><th>Δ</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Vision cost / recording</td><td>[TODO]</td><td>[TODO]</td><td>−50%</td></tr>
+      <tr><td>p95 latency</td><td>[TODO]</td><td>[TODO]</td><td>−30%</td></tr>
+      <tr><td>[TODO: quality metric]</td><td>[TODO]</td><td>[TODO]</td><td>[TODO]</td></tr>
+    </tbody>
+  </table>
+
+  <h2>What didn't work</h2>
+  <p class="draft-note">[DRAFT — outline only] Dead ends worth recording:
+     approaches tried before the segmentation gate, and why they lost.</p>
+</article>
+
+<footer>
+  <p>saazm.dev · built with plain HTML and stubbornness</p>
+</footer>
+
+</body>
+</html>

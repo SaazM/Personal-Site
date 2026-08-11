@@ -1,0 +1,218 @@
+{
+  "meta": {
+    "title": "Saaz Mahadkar",
+    "description": "Co-founder & CEO at Bridge. Data science student at UCSD.",
+    "ogDescription": "Co-founder & CEO at Bridge.",
+    "canonical": "https://saazm.dev/"
+  },
+  "header": {
+    "name": "Saaz Mahadkar",
+    "blurb": "Co-founder & CEO at Bridge. Data science student at UCSD.",
+    "links": [
+      {
+        "label": "GitHub",
+        "href": "https://github.com/SaazM"
+      },
+      {
+        "label": "LinkedIn",
+        "href": "https://linkedin.com/in/saaz-m-52b6791a3"
+      },
+      {
+        "label": "Email",
+        "href": "mailto:saaz.m@icloud.com"
+      },
+      {
+        "label": "Bridge",
+        "href": "https://bridge-jobs.com"
+      }
+    ],
+    "invite": {
+      "lead": "Prefer questions to scrolling?",
+      "label": "Talk to an AI version of me",
+      "href": "talk/"
+    }
+  },
+  "experience": [
+    {
+      "title": "Bridge, Co-Founder & CEO",
+      "date": "Dec 2025 – present",
+      "links": [
+        {
+          "label": "bridge-jobs.com",
+          "href": "https://bridge-jobs.com"
+        },
+        {
+          "label": "shorts.bridge-jobs.com",
+          "href": "https://shorts.bridge-jobs.com"
+        }
+      ],
+      "body": "AI-native technical screening: we screen engineering candidates by recording their screen while they complete a real engineering task instead of LeetCodes and resumes. FoundersInc Canopy SP26."
+    },
+    {
+      "title": "J.P. Morgan, Summer Analyst",
+      "date": "Jun – Aug 2026",
+      "links": [],
+      "body": "Equity Capital Markets Team. Modeled how shifts in frontier AI model markets propagate across sectors."
+    },
+    {
+      "title": "VenuAI (Y Combinator), Software Engineering Intern",
+      "date": "2024 – 2025",
+      "links": [],
+      "body": "Automated conference lead outreach software in Python/Django REST framework. Created a video + voice avatar to help customers onboard. Various other SWE tasks. "
+    },
+    {
+      "title": "Pouch, Co-Founder",
+      "date": "Jan 2023 – Mar 2025",
+      "links": [],
+      "body": "Small-business loyalty platform. Consumer and merchant Flutter apps, Django backend dashboard, 600 downloads, 5 restaurant partners.\n\nPress: https://www.tapinto.net/towns/millburn-slash-short-hills/sections/business-and-finance/articles/millburn-college-students-launch-app-to-support-local-businesses "
+    },
+    {
+      "title": "Out of the Blue AI, Data Science Intern",
+      "date": "Jan – Mar 2025",
+      "links": [
+        {
+          "label": "GitHub",
+          "href": "https://github.com/Sweekrit-B/ootb"
+        }
+      ],
+      "body": "Anomaly detection across 4M+ e-commerce records with hierarchical time-series forecasting (Pandas, Prophet, Streamlit)."
+    }
+  ],
+  "projects": [
+    {
+      "title": "Bridge Shorts",
+      "link": {
+        "label": "shorts.bridge-jobs.com",
+        "href": "https://shorts.bridge-jobs.com"
+      },
+      "body": "Wordle-style daily AI build challenge, consumer side project part of Bridge. Goal is to create the first data set linking prompting patterns to human judgement."
+    },
+    {
+      "title": "TritonPlanner",
+      "link": {
+        "label": "tritonplanner.com",
+        "href": "https://tritonplanner.com"
+      },
+      "body": "Agentic course planning website. LangChain + Pinecone retrieval over degree requirements; 800+ courses and prerequisite chains scraped into a Neo4j graph."
+    },
+    {
+      "title": "Agora",
+      "link": {
+        "label": "theagoraproject.app",
+        "href": "https://theagoraproject.app"
+      },
+      "body": "Cofounded a non-profit SAT prep platform (React, Vite, Supabase) focused on helping high school students get into college."
+    },
+    {
+      "title": "FTC 8405 (Millburn Robotics)",
+      "link": {
+        "label": "GitHub",
+        "href": "https://github.com/SaazM/8405FTC_Revival_2022-2023"
+      },
+      "body": "Co-captain of the NJ state championship winning team for the 2022–2023 FTC season. Java robot stack with Road Runner pathing, AprilTag localization, and autonomous routines."
+    },
+    {
+      "title": "VEX AI",
+      "link": {
+        "label": "GitHub",
+        "href": "https://github.com/SaazM/VEXAI_2022-2023"
+      },
+      "body": "Created fully autonomous robots using PROS/C++ robot control, Jetson Nano's with custom trained YOLO vision models, and depth sensing cameras for on-field object detection and autonomous driving."
+    },
+    {
+      "title": "AI Security",
+      "link": {
+        "label": "GitHub",
+        "href": "https://github.com/SaazM/aisecurity"
+      },
+      "body": "Privacy-conscious facial recognition for school entry monitoring (Millburn CSII). FaceNet embeddings on a Jetson Nano."
+    }
+  ],
+  "writing": {
+    "items": [
+      {
+        "title": "The Human's Role in Engineering",
+        "url": "https://saazmahadkar.substack.com/p/the-humans-role-in-engineering",
+        "date": "Jul 2026",
+        "about": "Some notes on the human role in engineering, post-agents."
+      },
+      {
+        "title": "We Made Applying Easier. Did We Make Hiring Worse?",
+        "url": "https://saazmahadkar.substack.com/p/we-made-applying-easier-did-we-make",
+        "date": "Apr 2026",
+        "about": "Why getting a job feels harder in the biggest tech boom in decades."
+      },
+      {
+        "title": "Why Leetcode Fails in the AI Era",
+        "url": "https://saazmahadkar.substack.com/p/why-leetcode-fails-in-the-ai-era",
+        "date": "Apr 2026",
+        "about": "Nobody liked LeetCode to begin with. Now it measures the wrong thing entirely."
+      }
+    ],
+    "more": {
+      "label": "more on Substack →",
+      "href": "https://saazmahadkar.substack.com"
+    }
+  },
+  "hackathons": [
+    {
+      "name": "PennApps XXIII,  Second Place General",
+      "date": "2022",
+      "link": {
+        "label": "Puppet",
+        "href": "https://devpost.com/software/puppet"
+      },
+      "about": "Touchless computer control: k-means gesture classification over a webcam, mapped to keys and mouse movement. "
+    },
+    {
+      "name": "PennApps XXIV, First Place Computer Vision",
+      "date": "2023",
+      "link": {
+        "label": "SmartPalate",
+        "href": "https://devpost.com/software/smartpalat"
+      },
+      "about": "Computer vision that reads what's in your fridge and suggests recipes against your nutrition targets."
+    },
+    {
+      "name": "HackMHS",
+      "date": "2023-2024",
+      "link": null,
+      "about": "Co-director. One of the largest high school hackathons on the East Coast."
+    }
+  ],
+  "education": [
+    {
+      "title": "UC San Diego",
+      "date": "Expected 2028",
+      "body": "B.S. Data Science",
+      "sub": "Founding San Diego Political Union, Triton Consulting Group, Former VP Operations at Student Entrepreneurship Network, Former SWE at Triton Software Engineering.."
+    },
+    {
+      "title": "Northwestern University",
+      "date": "fall 2025",
+      "body": "One semester, then transferred to UC San Diego.",
+      "sub": ""
+    }
+  ],
+  "footer": {
+    "line": "saazm.dev · built with plain HTML and stubbornness",
+    "links": [
+      {
+        "label": "GitHub",
+        "href": "https://github.com/SaazM"
+      },
+      {
+        "label": "LinkedIn",
+        "href": "https://linkedin.com/in/saaz-m-52b6791a3"
+      },
+      {
+        "label": "Email",
+        "href": "mailto:saaz.m@icloud.com"
+      },
+      {
+        "label": "Bridge",
+        "href": "https://bridge-jobs.com"
+      }
+    ]
+  }
+}
