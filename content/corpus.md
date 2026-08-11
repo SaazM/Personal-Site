@@ -63,7 +63,7 @@ Some notes on the human role in engineering, post-agents.
 [https://saazmahadkar.substack.com/p/the-humans-role-in-engineering](https://saazmahadkar.substack.com/p/the-humans-role-in-engineering)
 
 A few weeks back I was talking with Blake Courter, who heads engineering for a
-number of VC backed firms, and the conversation turned to what he actually
+number of VC-backed firms, and the conversation turned to what he actually
 looks for in an engineer these days. More specifically, we got into what a
 human adds on top of an agent — in other words, what's the role of a human in
 AI now? Here are some of my thoughts on a question that's a lot more
@@ -79,7 +79,7 @@ creativity to know what's worth building in the first place. And deciding what
 to build goes hand in hand with convincing others to give you the resources
 and buy-in to build it, and to get people to actually use it.
 
-1. Choosing Between Nuances
+2. Choosing Between Nuances
 
 It's easy to give an agent step-by-step instructions for something that's
 easily testable. If I ask an agent to find the correlation between two
@@ -101,7 +101,7 @@ intended output. This is where systems design comes up the most. There are
 usually multiple architectures that can solve the same problem, so the choice
 comes down to you.
 
-1. Taste
+3. Taste
 
 This was one of Blake's points too, and it's closely related to the ones
 above, but broader: taste for what the user actually wants. You can always run
@@ -112,18 +112,18 @@ articulate it, is something AI still struggles with. Looking at an output and
 knowing exactly what needs to change is a skill that isn't going away anytime
 soon.
 
-1. Fit
+4. Fit
 
 This is the point everyone can agree on and see. The behavior of an employee
 is a lot harder to improve and change than any technical knowledge, so it's
 also the one that's key to nail in hiring. This includes points such as
 collaboration and how personable candidates are. Different teams need
-different personalities and that alignment is important not just so they can
+different personalities, and that alignment is important not just so they can
 contribute more, but also because those are the employees who stay. I remember
-one conversation with a recruiter that said "the best engineer is the engineer
+one conversation with a recruiter who said "the best engineer is the engineer
 that stays."
 
-1. Checking Outputs
+5. Checking Outputs
 
 This is the point most recruiters screen for right now, because it's the
 easiest to measure, but it's also, in my opinion, the first one that's going
@@ -160,15 +160,15 @@ Why getting a job feels harder in the biggest tech boom in decades.
 [https://saazmahadkar.substack.com/p/we-made-applying-easier-did-we-make](https://saazmahadkar.substack.com/p/we-made-applying-easier-did-we-make)
 
 Technology has come a long way since my dad applied for his software
-engineering job at the tail end of the 90s. In the days of the dot com boom,
-as long as you were smart enough to have an engineering degree, and had basic
-programming skills you were hired.
+engineering job at the tail end of the 90s. In the days of the dot-com boom,
+as long as you were smart enough to have an engineering degree and had basic
+programming skills, you were hired.
 
 Three decades later, we're in another technology boom, but finding a job
 doesn't feel the same. Students on campuses apply to hundreds of jobs without
 even getting the chance to interview.
 
-So what changed.
+So what changed?
 
 Technology made applying easier, and harder.
 Technology is supposed to make our lives better, and that's what recruiting
@@ -181,16 +181,16 @@ harder. It's impossible for recruiters to read each individual application
 since they are flooded with them. Recruiters used to be able to read about
 your projects, interests, and experiences that made you unique. Now most
 candidates are filtered out based on school, GPA, and keyword scanners.
-Recruiting has increasingly become AI's writing applications and AI's reading
+Recruiting has increasingly become AI writing applications and AI reading
 applications.
 
 Supply exploded.
 As CS went from a niche hobby for weird nerds to a default career path for
-ambitious students the market was flooded. As we have seen in recent years,
+ambitious students, the market was flooded. As we have seen in recent years,
 demand has not kept up, and AI is making that even more uncertain.
 
 AI is changing hiring incentives.
-The dot com bubble was filled with unlimited speculative capital. Companies
+The dot-com bubble was filled with unlimited speculative capital. Companies
 raised millions and hired aggressively before even bringing a product to
 market. Companies still raise today, but as AI tools like Claude Code start to
 take over larger parts of SWE work, companies are hesitant to hire at the same
@@ -204,10 +204,10 @@ seem like recruiting has gotten that much better. Candidates have to apply to
 hundreds of jobs and companies are flooded with thousands of applicants.
 
 Can AI fix it?
-There are a number of startups including ours that are trying.
+There are a number of startups, including ours, that are trying.
 
-A lot of the most immediate effects seems to be in sourcing, with companies
-like Juicebox raising $80M at a nearly $1B valuation. Platforms like Hirevue
+A lot of the most immediate effects seem to be in sourcing, with companies
+like Juicebox raising $80M at a nearly $1B valuation. Platforms like HireVue
 are also creating AI screeners that use agents to ask questions. I've tried
 these out and they don't feel dramatically better than the old versions, just
 an AI asking questions I could have read myself.
@@ -220,8 +220,8 @@ that often fall short — meaning most people never even get the chance to prove
 themselves.
 
 Closing thoughts
-I was pitching a VC the other day who said that "I don't know recruiting just
-might be one of those things thats always going to be f\*\*\*\*".
+I was pitching a VC the other day who said that "I don't know, recruiting just
+might be one of those things that's always going to be f\*\*\*\*".
 
 Maybe.
 
@@ -240,37 +240,62 @@ learning modern tools. But companies didn't adopt Leetcode because it was
 loved, but because it's a cheap, easy, and scalable way to filter out most
 candidates.
 
-With the advent of AI, Leetcodes aren't just annoying, but they become
+With the advent of AI, LeetCode interviews aren't just annoying — they become
 obsolete. Popular websites like interviewcoder.co make cheating on online
 assessments trivial, and that previously effective filter becomes useless.
 More importantly, we should ask why platforms like HackerRank are even focused
 on restricting one of the most important tools in modern engineering instead
 of using it as signal.
 
-As a result, many startups are reeling back take-homes or Leetcodes, and are
-doubling down on pair coding interviews where they can see candidates work
-through problems in real time. The larger signal is looking at how candidates
-think, not necessarily whether they passed a test. Some of the most talent
-dense companies have started to adapt. According to Business Insider, a post
-on Meta's internal message board stated that "Meta is developing a new type of
-coding interview in which candidates have access to an AI assistant. This is
-more representative of the developer environment that our future employees
-will work in, and also makes LLM-based cheating less effective."
+As a result, many startups are rolling back take-homes or LeetCode interviews,
+and are doubling down on pair coding interviews where they can see candidates
+work through problems in real time. The larger signal is looking at how
+candidates think, not necessarily whether they passed a test. Some of the most
+talent-dense companies have started to adapt. According to Business Insider, a
+post on Meta's internal message board stated that "Meta is developing a new
+type of coding interview in which candidates have access to an AI assistant.
+This is more representative of the developer environment that our future
+employees will work in, and also makes LLM-based cheating less effective."
 
 Another example is Mike Krieger, cofounder of Instagram and an Anthropic
-executive who stated that, "I actually was in a conversation this week around
+executive, who stated that "I actually was in a conversation this week around
 how we're revising our interview loop to actually let people use AI, because
 that is an actual part of the software engineering job today. Are you able to
 use these tools effectively to solve problems?"
 
-It's clear the screening tools of tomorrow will not limit AI but will assess
+It's clear the screening tools of tomorrow will not limit AI, but will assess
 how candidates use AI effectively.
 
 ## Views / opinions
 
-I'm entrepreneurial, and I love working on and tinkering with a bunch of side pro interested in a bunch of fields, including politics. I was involved in high school, and I'm starting a political union in San Diego. I'm interested in history. I love reading biographies and history. Napoleon's one of my heroes. I'm reading about Rockefeller right now and really love reading about historical figures. Of course, I'm really interested in technology. I've been doing it since eighth grade and am really into robotics at first I just tinkered around with a bunch of other projects, and then eventually, in high school, I built this restaurant rewards platform, which is my first kind of entrepreneurial journey with my friend Zion. I had a ton of fun with it, and that's really what got me into startups, but really, I've been into it for a very long time now. I did dabble in research too in high school, and then I won third place in my category at JSHS, New Jersey. I did research on creating machine learning models to predict bird migration movements, but I really enjoyed tinkering around and building projects more than just pure research stuff, although I do find research very interestingand then, yeah, I'm studying Data Science right now in college, but I don't find that my most interesting thing. In fact, I like engineering more than just my major. Although Data Science is my major, I'm really interested in a bunch of different things: taking philosophy classes and minoring in that, as well as various business classes, marketing classes, and product classes. Really, I like engineering more than Data Scienceand yeah, I try to really take a polymath approach, exploring things such as finance. That's why I interned at JP Morgan although finance is my passion, I thought it was just really interesting learning about different companies, working with the TMT team over there. I'm very sure I want to be an engineer building things
+I'm entrepreneurial, and I love working on and tinkering with a bunch of side
+projects. I'm interested in a bunch of fields, including politics. I was
+involved in high school, and I'm starting a political union in San Diego. I'm
+interested in history. I love reading biographies and history. Napoleon's one
+of my heroes. I'm reading about Rockefeller right now and really love reading
+about historical figures. Of course, I'm really interested in technology. I've
+been doing it since eighth grade and was really into robotics at first. I just
+tinkered around with a bunch of other projects, and then eventually, in high
+school, I built this restaurant rewards platform, which was my first kind of
+entrepreneurial journey with my friend Zion. I had a ton of fun with it, and
+that's really what got me into startups, but really, I've been into it for a
+very long time now. I did dabble in research too in high school, and then I
+won third place in my category at JSHS, New Jersey. I did research on creating
+machine learning models to predict bird migration movements, but I really
+enjoyed tinkering around and building projects more than just pure research
+stuff, although I do find research very interesting. And then, yeah, I'm
+studying Data Science right now in college, but I don't find that the most
+interesting thing. In fact, I like engineering more than just my major.
+Although Data Science is my major, I'm really interested in a bunch of
+different things: taking philosophy classes and minoring in that, as well as
+various business classes, marketing classes, and product classes. Really, I
+like engineering more than Data Science. And yeah, I try to really take a
+polymath approach, exploring things such as finance. That's why I interned at
+J.P. Morgan — although finance isn't my passion, I thought it was just really
+interesting learning about different companies, working with the TMT team over
+there. I'm very sure I want to be an engineer building things.
 
-FAQ / boundaries
+## FAQ / boundaries
 
 - Compensation, fundraising terms beyond what's public, or anything about
   specific people: decline, point to email.
