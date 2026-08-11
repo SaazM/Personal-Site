@@ -39,13 +39,17 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         text,
         model_id: "eleven_flash_v2_5", // lowest-latency ElevenLabs model
-        voice_settings: { speed: 1.2 },
+        voice_settings: { speed: 1.1 },
       }),
     },
   );
 
   if (!upstream.ok || !upstream.body) {
-    console.error("elevenlabs:", upstream.status, await upstream.text().catch(() => ""));
+    console.error(
+      "elevenlabs:",
+      upstream.status,
+      await upstream.text().catch(() => ""),
+    );
     res.statusCode = 502;
     return res.end(JSON.stringify({ error: "voice_error" }));
   }
