@@ -126,6 +126,14 @@
         "href": "https://github.com/SaazM/aisecurity"
       },
       "body": "Privacy-conscious facial recognition for school entry monitoring (Millburn CSII). FaceNet embeddings on a Jetson Nano."
+    },
+    {
+      "title": "HoMEwork",
+      "link": {
+        "label": "GitHub",
+        "href": "https://github.com/TritonSE/HomeWork-Website-Revamp"
+      },
+      "body": "Contributed as a SWE on TSE to rebuilding the website for HoMEwork, a San Diego nonprofit working to reduce recidivism. Led Stripe integrations."
     }
   ],
   "writing": {

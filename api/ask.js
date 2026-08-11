@@ -61,9 +61,14 @@ function localLimit(key, limit, windowMs) {
 }
 
 // Upstash REST (no SDK): INCR + first-hit EXPIRE. Used when env vars exist.
-async function upstashLimit(key, limit, windowSec) {
-  const url = process.env.UPSTASH_REDIS_REST_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+// Vercel marketplace integration injects KV_REST_API_*; bare Upstash uses UPSTASH_*.
+function redisCreds() {
+  const url = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL;
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN;
+  return url && token ? { url, token } : null;
+}
+
+async function upstashLimit(key, limit, windowSec, { url, token }) {
   const res = await fetch(`${url}/pipeline`, {
     method: "POST",
     headers: { Authorization: `Bearer ${token}` },
@@ -78,9 +83,10 @@ async function upstashLimit(key, limit, windowSec) {
 }
 
 async function allow(key, limit, windowSec) {
-  if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
+  const creds = redisCreds();
+  if (creds) {
     try {
-      return await upstashLimit(key, limit, windowSec);
+      return await upstashLimit(key, limit, windowSec, creds);
     } catch (err) {
       console.error("upstash unavailable, using local limiter:", err.message);
     }

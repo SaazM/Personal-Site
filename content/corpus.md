@@ -44,6 +44,9 @@ Bradley-Terry model.
 - TritonPlanner (tritonplanner.com): agentic course planner, 1,000+ MAU.
   LangChain + Pinecone retrieval over degree requirements; 800+ courses and
   prerequisite chains in a Neo4j graph.
+- HoMEwork (github.com/TritonSE/HomeWork-Website-Revamp): contributed as a SWE
+  on TSE to rebuilding the website for a San Diego nonprofit working to
+  reduce recidivism; led Stripe integrations.
 - Hackathons: PennApps XXIV 2023 (SmartPalate — second overall + first in
   computer vision), PennApps XXIII 2022 (Puppet — first place), co-directed
   HackMHS in 2023.
