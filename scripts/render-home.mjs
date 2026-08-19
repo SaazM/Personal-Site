@@ -16,8 +16,17 @@ export function esc(s) {
     .replace(/"/g, "&quot;");
 }
 
+function isExternal(href) {
+  return /^https?:\/\//i.test(href);
+}
+
+function anchor(href, label) {
+  const extra = isExternal(href) ? ' target="_blank" rel="noopener noreferrer"' : "";
+  return `<a href="${esc(href)}"${extra}>${esc(label)}</a>`;
+}
+
 function linkList(links, sep = " ·\n    ") {
-  return links.map((l) => `<a href="${esc(l.href)}">${esc(l.label)}</a>`).join(sep);
+  return links.map((l) => anchor(l.href, l.label)).join(sep);
 }
 
 function renderExperience(items) {
@@ -40,7 +49,7 @@ function renderProjects(items) {
   return items
     .map((p) => {
       const date = p.link?.href
-        ? `· <a href="${esc(p.link.href)}">${esc(p.link.label)}</a>`
+        ? `· ${anchor(p.link.href, p.link.label)}`
         : p.link?.label
           ? `· ${esc(p.link.label)}`
           : "";
@@ -57,14 +66,14 @@ function renderWriting(writing) {
   const items = (writing.items ?? [])
     .map(
       (w) => `    <li>
-      <a href="${esc(w.url)}">${esc(w.title)}</a>
+      ${anchor(w.url, w.title)}
       <span class="date">· ${esc(w.date)}</span>
       <span class="about">${esc(w.about)}</span>
     </li>`
     )
     .join("\n");
   const more = writing.more?.href
-    ? `\n  <p class="more"><a href="${esc(writing.more.href)}">${esc(writing.more.label)}</a></p>`
+    ? `\n  <p class="more">${anchor(writing.more.href, writing.more.label)}</p>`
     : "";
   return `  <ul class="notes">
 ${items}
@@ -76,7 +85,7 @@ function renderHackathons(items) {
     .map((h) => {
       let about = esc(h.about);
       if (h.link?.href) {
-        about = `<a href="${esc(h.link.href)}">${esc(h.link.label)}</a> —\n        ${about}`;
+        about = `${anchor(h.link.href, h.link.label)} —\n        ${about}`;
       }
       return `    <li>
       <strong>${esc(h.name)}</strong>
@@ -131,7 +140,7 @@ export function renderHome(site) {
   <p class="links">
     ${linkList(header.links)}
   </p>
-${header.invite?.href ? `  <p class="invite">${esc(header.invite.lead)} <a href="${esc(header.invite.href)}">${esc(header.invite.label)} →</a></p>\n` : ""}</header>
+${header.invite?.href ? `  <p class="invite">${esc(header.invite.lead)} ${anchor(header.invite.href, `${header.invite.label} →`)}</p>\n` : ""}</header>
 
 <main>
 
