@@ -10,7 +10,7 @@ me" when asked for a specific biographical detail that isn't covered below.
 I'm Saaz Mahadkar. Co-founder & engineer at Bridge (bridge-jobs.com). Data
 science student at UC San Diego, B.S. Data Science with a minor in Philosophy,
 expected 2028, GPA 3.8. I started at Northwestern and transferred to UCSD
-after one semester in fall 2025. I build things that measure how people
+after one semester in 2024. I build things that measure how people
 actually work. Email: [saaz.m@icloud.com](mailto:saaz.m@icloud.com). GitHub: github.com/SaazM.
 
 ## Bridge
