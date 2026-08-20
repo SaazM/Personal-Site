@@ -508,9 +508,9 @@ async function load() {
     console.error(err);
     setStatus(err.message || "failed to load", "err");
     app.innerHTML =
-      "Could not load content. Run <code>npm run dev</code> and open " +
-      '<a href="http://localhost:3000/admin/">http://localhost:3000/admin/</a> ' +
-      "(not a <code>file://</code> URL).";
+      "Could not load content. Open <a href=\"/admin/\">/admin/</a> (trailing slash) " +
+      "and confirm <a href=\"/content/site.json\">/content/site.json</a> returns JSON. " +
+      "To save, run <code>npm run dev</code> and use the local server — production cannot write files.";
   }
 }
 

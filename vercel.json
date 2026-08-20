@@ -3,5 +3,8 @@
     "api/ask.js": {
       "includeFiles": "content/corpus.md"
     }
-  }
+  },
+  "redirects": [
+    { "source": "/admin", "destination": "/admin/", "permanent": false }
+  ]
 }
