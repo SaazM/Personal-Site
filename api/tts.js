@@ -38,7 +38,7 @@ export default async function handler(req, res) {
       headers: { "xi-api-key": apiKey, "Content-Type": "application/json" },
       body: JSON.stringify({
         text,
-        model_id: "eleven_v3",
+        model_id: "eleven_multilingual_v2",
         voice_settings: { speed: 1.1 },
       }),
     },
