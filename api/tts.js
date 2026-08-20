@@ -25,8 +25,8 @@ export default async function handler(req, res) {
   }
 
   const apiKey = process.env.ELEVENLABS_API_KEY;
-  const voiceId = process.env.ELEVENLABS_VOICE_ID;
-  if (!apiKey || !voiceId) {
+  const voiceId = "82amYSQ49wPJxqhQWcSf";
+  if (!apiKey) {
     res.statusCode = 503;
     return res.end(JSON.stringify({ error: "voice_offline" }));
   }
@@ -38,7 +38,7 @@ export default async function handler(req, res) {
       headers: { "xi-api-key": apiKey, "Content-Type": "application/json" },
       body: JSON.stringify({
         text,
-        model_id: "eleven_flash_v2_5", // lowest-latency ElevenLabs model
+        model_id: "eleven_v3",
         voice_settings: { speed: 1.1 },
       }),
     },
