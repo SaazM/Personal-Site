@@ -25,7 +25,7 @@ export default async function handler(req, res) {
   }
 
   const apiKey = process.env.ELEVENLABS_API_KEY;
-  const voiceId = "82amYSQ49wPJxqhQWcSf";
+  const voiceId = "NkKp7kXG9NGsWVOyZ6w2";
   if (!apiKey) {
     res.statusCode = 503;
     return res.end(JSON.stringify({ error: "voice_offline" }));
