@@ -359,8 +359,6 @@ form.addEventListener("submit", async (e) => {
         const payload = JSON.parse(data);
         if (type === "delta") {
           full += payload.text;
-          answerEl.textContent = full;
-          transcript.scrollTop = transcript.scrollHeight;
         } else if (type === "done") {
           done = payload;
         }
@@ -378,7 +376,7 @@ form.addEventListener("submit", async (e) => {
     history.push({ role: "user", content: q });
     history.push({ role: "assistant", content: answer });
 
-    await speak(done);
+    await speak(done, answerEl);
     answered = true;
   } catch {
     answerEl.textContent = "Something's broken on my end. The real me: saaz.m@icloud.com";
@@ -396,12 +394,20 @@ form.addEventListener("submit", async (e) => {
 
 // ---------------------------------------------------------------- voice out
 
-function speak(done) {
-  if (!done?.text || !done.sig) {
-    return speakWithoutAudio(done?.text ?? "");
+function speak(done, answerEl) {
+  const text = done?.text ?? "";
+  const reveal = () => {
+    if (answerEl && text) {
+      answerEl.textContent = text;
+      transcript.scrollTop = transcript.scrollHeight;
+    }
+  };
+  if (!text || !done.sig) {
+    reveal();
+    return speakWithoutAudio(text);
   }
   return new Promise((resolve) => {
-    const url = `/api/tts?text=${encodeURIComponent(done.text)}&sig=${done.sig}`;
+    const url = `/api/tts?text=${encodeURIComponent(text)}&sig=${done.sig}`;
     const audio = sharedAudio || new Audio();
     sharedAudio = audio;
     audio.src = url;
@@ -414,11 +420,13 @@ function speak(done) {
     const fallback = () => {
       if (settled) return;
       settled = true;
-      speakWithoutAudio(done.text).then(resolve);
+      reveal();
+      speakWithoutAudio(text).then(resolve);
     };
     audio.onerror = fallback;
     audio.onended = finish;
     audio.onplaying = () => {
+      reveal();
       setState("speaking");
       mouthLoop();
     };
