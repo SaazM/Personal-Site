@@ -5,8 +5,10 @@
 
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { createHmac, randomBytes } from "node:crypto";
 import OpenAI from "openai";
+import { sign } from "../lib/sign.js";
+
+export { sign };
 
 // Cold-start work: corpus + persona are stable per instance. OpenAI caches
 // long shared prompt prefixes automatically — no cache config needed.
@@ -17,14 +19,15 @@ try {
   console.error("corpus.md not found — avatar will refuse most questions");
 }
 
-// If TTS_HMAC_SECRET isn't set, fall back to a per-instance secret. Fine in
-// dev; in production set the env var so sigs verify across instances.
-const HMAC_SECRET = process.env.TTS_HMAC_SECRET || randomBytes(32).toString("hex");
-export function sign(text) {
-  return createHmac("sha256", HMAC_SECRET).update(text).digest("hex");
-}
-
 const MODEL = process.env.OPENAI_MODEL || "gpt-4o-mini";
+
+// Reuse across warm invocations — constructing per request adds nothing but
+// latency, and maxRetries:5 can stall a first reply for many seconds on 429s.
+let openai = null;
+function getOpenAI() {
+  if (!openai) openai = new OpenAI({ maxRetries: 2 });
+  return openai;
+}
 
 const PERSONA = `You are an AI approximation of Saaz Mahadkar, speaking on his personal website. You speak in the first person, as Saaz.
 
@@ -75,33 +78,42 @@ function redisCreds() {
   return url && token ? { url, token } : null;
 }
 
-async function upstashLimit(key, limit, windowSec, { url, token }) {
+async function upstashLimitMany(checks, { url, token }) {
+  // One pipeline = one RTT for all rate-limit keys.
+  const commands = [];
+  for (const { key, windowSec } of checks) {
+    commands.push(["INCR", key]);
+    commands.push(["EXPIRE", key, windowSec, "NX"]);
+  }
   const res = await fetch(`${url}/pipeline`, {
     method: "POST",
     headers: { Authorization: `Bearer ${token}` },
-    body: JSON.stringify([
-      ["INCR", key],
-      ["EXPIRE", key, windowSec, "NX"],
-    ]),
+    body: JSON.stringify(commands),
   });
   if (!res.ok) throw new Error(`upstash ${res.status}`);
-  const [{ result: count }] = await res.json();
-  return count <= limit;
+  const results = await res.json();
+  return checks.every((c, i) => results[i * 2].result <= c.limit);
 }
 
-async function allow(key, limit, windowSec) {
+async function allowAll(checks) {
   const creds = redisCreds();
   if (creds) {
     try {
-      return await upstashLimit(key, limit, windowSec, creds);
+      return await upstashLimitMany(checks, creds);
     } catch (err) {
       console.error("upstash unavailable, using local limiter:", err.message);
     }
   }
-  return localLimit(key, limit, windowSec * 1000);
+  return checks.every((c) => localLimit(c.key, c.limit, c.windowSec * 1000));
 }
 
 export default async function handler(req, res) {
+  // Lightweight warmup so cold start happens before the first question.
+  if (req.method === "GET" || req.method === "HEAD") {
+    res.statusCode = 204;
+    res.setHeader("Cache-Control", "no-store");
+    return res.end();
+  }
   if (req.method !== "POST") {
     res.statusCode = 405;
     return res.end(JSON.stringify({ error: "method_not_allowed" }));
@@ -113,10 +125,11 @@ export default async function handler(req, res) {
     "unknown";
 
   const day = new Date().toISOString().slice(0, 10);
-  const ok =
-    (await allow(`ask:m:${ip}`, MINUTE_LIMIT, 60)) &&
-    (await allow(`ask:d:${ip}:${day}`, DAY_LIMIT, 86400)) &&
-    (await allow(`ask:g:${day}`, GLOBAL_DAY_LIMIT, 86400));
+  const ok = await allowAll([
+    { key: `ask:m:${ip}`, limit: MINUTE_LIMIT, windowSec: 60 },
+    { key: `ask:d:${ip}:${day}`, limit: DAY_LIMIT, windowSec: 86400 },
+    { key: `ask:g:${day}`, limit: GLOBAL_DAY_LIMIT, windowSec: 86400 },
+  ]);
   if (!ok) {
     res.statusCode = 429;
     return res.end(JSON.stringify({ error: "rate_limited" }));
@@ -149,8 +162,7 @@ export default async function handler(req, res) {
 
   let client;
   try {
-    // maxRetries raised: org-level TPM 429s clear in under a second
-    client = new OpenAI({ maxRetries: 5 }); // reads OPENAI_API_KEY
+    client = getOpenAI();
   } catch (err) {
     console.error("openai client:", err.message);
     res.statusCode = 503;
@@ -161,8 +173,14 @@ export default async function handler(req, res) {
     "Content-Type": "text/event-stream",
     "Cache-Control": "no-cache",
     Connection: "keep-alive",
+    "X-Accel-Buffering": "no",
   });
-  const send = (event, data) => res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
+  // Push headers to the client before waiting on OpenAI TTFT.
+  if (typeof res.flushHeaders === "function") res.flushHeaders();
+  const send = (event, data) => {
+    res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
+    if (typeof res.flush === "function") res.flush();
+  };
 
   try {
     const stream = await client.chat.completions.create({

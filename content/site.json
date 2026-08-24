@@ -27,7 +27,7 @@
       }
     ],
     "invite": {
-      "lead": "Prefer questions to scrolling?",
+      "lead": "",
       "label": "Talk to an AI version of me",
       "href": "talk/"
     }

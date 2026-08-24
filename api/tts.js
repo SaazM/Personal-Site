@@ -1,15 +1,31 @@
 // GET /api/tts?text=...&sig=... — streams mp3 of the avatar's voice.
 // sig is the HMAC that /api/ask issued for exactly this text, so this
 // endpoint can't be used as a free TTS proxy for arbitrary content.
+// GET with no params is a cold-start warmup (204).
 
 import { timingSafeEqual } from "node:crypto";
 import { Readable } from "node:stream";
-import { sign } from "./ask.js";
+import { sign } from "../lib/sign.js";
+
+// Flash is built for low TTFA; override with ELEVENLABS_MODEL if needed.
+const TTS_MODEL = process.env.ELEVENLABS_MODEL || "eleven_flash_v2_5";
 
 export default async function handler(req, res) {
-  const url = new URL(req.url, "http://localhost");
+  const url = new URL(req.url || "/", "http://localhost");
   const text = url.searchParams.get("text") || "";
   const sig = url.searchParams.get("sig") || "";
+
+  // Warmup / health — load this function without spending ElevenLabs quota.
+  if (req.method === "HEAD" || (req.method === "GET" && !text)) {
+    res.statusCode = 204;
+    res.setHeader("Cache-Control", "no-store");
+    return res.end();
+  }
+
+  if (req.method !== "GET") {
+    res.statusCode = 405;
+    return res.end(JSON.stringify({ error: "method_not_allowed" }));
+  }
 
   if (!text || text.length > 1200 || !sig) {
     res.statusCode = 400;
@@ -38,7 +54,7 @@ export default async function handler(req, res) {
       headers: { "xi-api-key": apiKey, "Content-Type": "application/json" },
       body: JSON.stringify({
         text,
-        model_id: "eleven_multilingual_v2",
+        model_id: TTS_MODEL,
         voice_settings: { speed: 1.1 },
       }),
     },

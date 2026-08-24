@@ -213,16 +213,16 @@ function render() {
       linksEditor(site.header.links, (v) => {
         site.header.links = v;
       }),
-      field("Invite lead", site.header.invite?.lead ?? "", {
-        onInput: (v) => {
-          site.header.invite = site.header.invite || { lead: "", label: "", href: "" };
-          site.header.invite.lead = v;
-        },
-      }),
-      field("Invite label", site.header.invite?.label ?? "", {
+      field("Invite title", site.header.invite?.label ?? "", {
         onInput: (v) => {
           site.header.invite = site.header.invite || { lead: "", label: "", href: "" };
           site.header.invite.label = v;
+        },
+      }),
+      field("Invite subtitle", site.header.invite?.lead ?? "", {
+        onInput: (v) => {
+          site.header.invite = site.header.invite || { lead: "", label: "", href: "" };
+          site.header.invite.lead = v;
         },
       }),
       field("Invite href", site.header.invite?.href ?? "", {
