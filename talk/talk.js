@@ -345,8 +345,8 @@ form.addEventListener("submit", async (e) => {
       return;
     }
 
-    // Parse the SSE stream: show deltas as they arrive (don't wait for TTS).
-    // done carries {text, sig} for authorized voice playback.
+    // Collect the streamed answer invisibly. It is revealed word-by-word
+    // during voice playback so the transcript follows the conversation.
     const reader = res.body.getReader();
     const decoder = new TextDecoder();
     let buffer = "";
@@ -364,16 +364,7 @@ form.addEventListener("submit", async (e) => {
         if (!data) continue;
         const payload = JSON.parse(data);
         if (type === "delta") {
-          const first = !full;
           full += payload.text;
-          answerEl.textContent = full;
-          transcript.scrollTop = transcript.scrollHeight;
-          // First token: stop the dissolve so the reply is readable immediately.
-          if (first && state === "thinking") {
-            clearInterval(dissolveTimer);
-            show(FRAMES.neutral);
-            status.textContent = "";
-          }
         } else if (type === "done") {
           done = payload;
         }
@@ -388,12 +379,10 @@ form.addEventListener("submit", async (e) => {
           : "My brain's offline right now. The real me: saaz.m@icloud.com";
       return;
     }
-    // Prefer the finalized done.text (trimmed) over the streamed accumulation.
-    if (done?.text && done.text !== full) answerEl.textContent = done.text;
     history.push({ role: "user", content: q });
     history.push({ role: "assistant", content: answer });
 
-    await speak(done, answerEl);
+    await speak({ ...done, text: answer }, answerEl);
     answered = true;
   } catch {
     answerEl.textContent = "Something's broken on my end. The real me: saaz.m@icloud.com";
@@ -413,33 +402,63 @@ form.addEventListener("submit", async (e) => {
 
 function speak(done, answerEl) {
   const text = done?.text ?? "";
-  // Text is already streaming into answerEl; only fill if somehow empty.
-  const ensureText = () => {
-    if (answerEl && text && !answerEl.textContent) {
-      answerEl.textContent = text;
-      transcript.scrollTop = transcript.scrollHeight;
-    }
-  };
   if (!text || !done.sig) {
-    ensureText();
-    return speakWithoutAudio(text);
+    return speakWithoutAudio(text, answerEl);
   }
   const url = `/api/tts?text=${encodeURIComponent(text)}&sig=${done.sig}`;
   // iOS: Web Audio avoids HTMLAudioElement holding the audio session in a
   // state that breaks the next SpeechRecognition.start() (WebKit 317741).
-  if (isIOS) return speakViaWebAudio(url, text, ensureText);
-  return speakViaElement(url, text, ensureText);
+  if (isIOS) return speakViaWebAudio(url, text, answerEl);
+  return speakViaElement(url, text, answerEl);
 }
 
-function speakViaElement(url, text, ensureText) {
+function createSpeechReveal(answerEl, text) {
+  const boundaries = [...text.matchAll(/\S+\s*/g)].map((m) => m.index + m[0].length);
+  let frame = null;
+  let shown = 0;
+
+  const render = (end) => {
+    if (!answerEl || end <= shown) return;
+    shown = end;
+    answerEl.textContent = text.slice(0, end).trimEnd();
+    transcript.scrollTop = transcript.scrollHeight;
+  };
+
+  return {
+    start(progress) {
+      const tick = () => {
+        const target = text.length * Math.max(0, Math.min(1, progress()));
+        for (const end of boundaries) {
+          if (end > target) break;
+          render(end);
+        }
+        frame = requestAnimationFrame(tick);
+      };
+      tick();
+    },
+    stop() {
+      cancelAnimationFrame(frame);
+      frame = null;
+    },
+    finish() {
+      this.stop();
+      render(text.length);
+    },
+  };
+}
+
+function speakViaElement(url, text, answerEl) {
   return new Promise((resolve) => {
     const audio = sharedAudio || new Audio();
     sharedAudio = audio;
     audio.src = url;
+    const reveal = createSpeechReveal(answerEl, text);
+    const estimatedDuration = Math.max(1, text.split(/\s+/).length * 0.32);
     let settled = false;
     const finish = () => {
       if (settled) return;
       settled = true;
+      reveal.finish();
       try {
         audio.pause();
       } catch {
@@ -450,13 +469,19 @@ function speakViaElement(url, text, ensureText) {
     const fallback = () => {
       if (settled) return;
       settled = true;
-      ensureText();
-      speakWithoutAudio(text).then(resolve);
+      reveal.stop();
+      speakWithoutAudio(text, answerEl).then(resolve);
     };
     audio.onerror = fallback;
     audio.onended = finish;
     audio.onplaying = () => {
-      ensureText();
+      reveal.start(
+        () =>
+          audio.currentTime /
+          (Number.isFinite(audio.duration) && audio.duration > 0
+            ? audio.duration
+            : estimatedDuration),
+      );
       setState("speaking");
       mouthLoop();
     };
@@ -472,7 +497,7 @@ function speakViaElement(url, text, ensureText) {
 
 // Fetch + decode + BufferSource — keeps unlockAudio/sharedAudio for priming,
 // but doesn't leave an HTMLMediaElement session stuck against the mic.
-function speakViaWebAudio(url, text, ensureText) {
+function speakViaWebAudio(url, text, answerEl) {
   return new Promise((resolve) => {
     let settled = false;
     const finish = () => {
@@ -484,7 +509,7 @@ function speakViaWebAudio(url, text, ensureText) {
       if (settled) return;
       settled = true;
       // Element path as last resort; may still fight recognition on older iOS.
-      speakViaElement(url, text, ensureText).then(resolve);
+      speakViaElement(url, text, answerEl).then(resolve);
     };
 
     (async () => {
@@ -508,13 +533,16 @@ function speakViaWebAudio(url, text, ensureText) {
         const src = audioCtx.createBufferSource();
         src.buffer = decoded;
         src.connect(analyser);
+        const reveal = createSpeechReveal(answerEl, text);
         src.onended = () => {
           try { src.disconnect(); } catch {}
+          reveal.finish();
           finish();
         };
-        ensureText();
         setState("speaking");
         mouthLoop();
+        const startedAt = audioCtx.currentTime;
+        reveal.start(() => (audioCtx.currentTime - startedAt) / decoded.duration);
         src.start();
       } catch {
         fallback();
@@ -525,13 +553,20 @@ function speakViaWebAudio(url, text, ensureText) {
 
 // TTS unavailable (no key configured, quota, network): animate the mouth for
 // roughly reading duration so the face still performs.
-function speakWithoutAudio(text) {
+function speakWithoutAudio(text, answerEl) {
   return new Promise((resolve) => {
     if (!text) return resolve();
     analyser = null;
     setState("speaking");
     mouthLoop();
-    setTimeout(resolve, Math.min(8000, 250 + text.split(/\s+/).length * 320));
+    const duration = Math.min(8000, 250 + text.split(/\s+/).length * 320);
+    const startedAt = performance.now();
+    const reveal = createSpeechReveal(answerEl, text);
+    reveal.start(() => (performance.now() - startedAt) / duration);
+    setTimeout(() => {
+      reveal.finish();
+      resolve();
+    }, duration);
   });
 }
 
