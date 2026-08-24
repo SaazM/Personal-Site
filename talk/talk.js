@@ -33,6 +33,8 @@ function show(frame) {
 let state = "idle";
 let stateTimer = null;
 let dissolveTimer = null;
+let liveTimer = null;
+let convo = false;
 
 const STATUS_TEXT = { idle: "", listening: "listening…", thinking: "…", speaking: "" };
 
@@ -40,10 +42,15 @@ function setState(next) {
   state = next;
   clearTimeout(stateTimer);
   clearInterval(dissolveTimer);
+  clearInterval(liveTimer);
+  liveTimer = null;
   status.textContent = STATUS_TEXT[next] ?? "";
   if (next === "idle" || next === "listening") {
     show(FRAMES.neutral);
-    if (!reducedMotion) scheduleBlink();
+    if (!reducedMotion) {
+      if (convo) startLiveMotion();
+      else scheduleBlink();
+    }
   } else if (next === "thinking") {
     if (reducedMotion) show(FRAMES.neutral);
     else startDissolve();
@@ -55,6 +62,17 @@ function setState(next) {
 
 function idleish() {
   return state === "idle" || state === "listening";
+}
+
+// While voice conversation mode is armed, keep a subtle neutral-frame shimmer
+// running so it is visually clear that the agent is still live and listening.
+function startLiveMotion() {
+  let alternate = false;
+  liveTimer = setInterval(() => {
+    if (!convo || !idleish()) return;
+    alternate = !alternate;
+    show(alternate ? FRAMES.neutral2 : FRAMES.neutral);
+  }, 260);
 }
 
 // Idle life: mostly single blinks, sometimes a double blink, occasionally an
@@ -98,9 +116,13 @@ function playBlink(double) {
 // Brief smile after finishing an answer — the little human beat.
 function smileFlash() {
   if (reducedMotion) return;
+  clearInterval(liveTimer);
+  liveTimer = null;
   show(FRAMES.smile);
   setTimeout(() => {
-    if (state === "idle") show(FRAMES.neutral);
+    if (state !== "idle") return;
+    show(FRAMES.neutral);
+    if (convo) startLiveMotion();
   }, 900);
 }
 
@@ -581,7 +603,6 @@ function speakWithoutAudio(text, answerEl) {
 
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 let recognition = null;
-let convo = false;
 let silentRounds = 0;
 let listenTimer = null;
 let listenWatchdog = null;
@@ -683,7 +704,7 @@ function stopConvo(note = "") {
   try { recognition?.abort(); } catch {
     try { recognition?.stop(); } catch {}
   }
-  if (state === "listening") setState("idle");
+  if (idleish()) setState("idle");
   if (note) status.textContent = note;
 }
 
