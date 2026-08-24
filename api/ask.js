@@ -19,7 +19,7 @@ try {
   console.error("corpus.md not found — avatar will refuse most questions");
 }
 
-const MODEL = process.env.OPENAI_MODEL || "gpt-4o-mini";
+const MODEL = process.env.OPENAI_MODEL || "gpt-4.1-nano";
 
 // Reuse across warm invocations — constructing per request adds nothing but
 // latency, and maxRetries:5 can stall a first reply for many seconds on 429s.
