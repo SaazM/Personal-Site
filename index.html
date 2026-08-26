@@ -27,12 +27,9 @@
     <a href="mailto:saaz.m@icloud.com">Email</a> ·
     <a href="https://bridge-jobs.com" target="_blank" rel="noopener noreferrer">Bridge</a>
   </p>
-  <a class="invite" href="talk/">
-  <span class="invite-text">
-    <span class="invite-label">Talk to an AI version of me</span>
-  </span>
-  <span class="invite-arrow" aria-hidden="true">→</span>
-</a>
+  <p class="invite">
+    <a href="talk/">Talk to an AI version of me →</a>
+  </p>
 </header>
 
 <main>
@@ -187,13 +184,6 @@ Press: https://www.tapinto.net/towns/millburn-slash-short-hills/sections/busines
 
 </main>
 
-<a class="invite invite-end" href="talk/">
-  <span class="invite-text">
-    <span class="invite-label">Talk to an AI version of me</span>
-  </span>
-  <span class="invite-arrow" aria-hidden="true">→</span>
-</a>
-
 <footer>
   <p>saazm.dev · built with plain HTML and stubbornness</p>
   <p>
@@ -204,22 +194,5 @@ Press: https://www.tapinto.net/towns/millburn-slash-short-hills/sections/busines
   </p>
 </footer>
 
-<a class="ask-chip" href="talk/" hidden aria-label="Talk to an AI version of me">Ask me →</a>
-<script>
-(() => {
-  const chip = document.querySelector(".ask-chip");
-  const invites = document.querySelectorAll("a.invite");
-  if (!chip || !invites.length || !("IntersectionObserver" in window)) return;
-  const onScreen = new Set();
-  const io = new IntersectionObserver((entries) => {
-    for (const e of entries) {
-      if (e.isIntersecting) onScreen.add(e.target);
-      else onScreen.delete(e.target);
-    }
-    chip.toggleAttribute("hidden", onScreen.size > 0);
-  }, { threshold: 0.35 });
-  invites.forEach((el) => io.observe(el));
-})();
-</script>
 </body>
 </html>

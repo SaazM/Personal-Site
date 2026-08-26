@@ -111,45 +111,17 @@ function renderEducation(items) {
     .join("\n\n");
 }
 
-function renderInvite(invite, extraClass = "") {
+function renderInvite(invite) {
   if (!invite?.href) return "";
-  const cls = extraClass ? `invite ${extraClass}` : "invite";
   const extra = isExternal(invite.href)
     ? ' target="_blank" rel="noopener noreferrer"'
     : "";
   const lead = invite.lead?.trim()
     ? `\n    <span class="invite-lead">${esc(invite.lead)}</span>`
     : "";
-  return `<a class="${cls}" href="${esc(invite.href)}"${extra}>
-  <span class="invite-text">
-    <span class="invite-label">${esc(invite.label)}</span>${lead}
-  </span>
-  <span class="invite-arrow" aria-hidden="true">→</span>
-</a>`;
-}
-
-function renderAskChip(invite) {
-  if (!invite?.href) return "";
-  const extra = isExternal(invite.href)
-    ? ' target="_blank" rel="noopener noreferrer"'
-    : "";
-  return `<a class="ask-chip" href="${esc(invite.href)}"${extra} hidden aria-label="${esc(invite.label)}">Ask me →</a>
-<script>
-(() => {
-  const chip = document.querySelector(".ask-chip");
-  const invites = document.querySelectorAll("a.invite");
-  if (!chip || !invites.length || !("IntersectionObserver" in window)) return;
-  const onScreen = new Set();
-  const io = new IntersectionObserver((entries) => {
-    for (const e of entries) {
-      if (e.isIntersecting) onScreen.add(e.target);
-      else onScreen.delete(e.target);
-    }
-    chip.toggleAttribute("hidden", onScreen.size > 0);
-  }, { threshold: 0.35 });
-  invites.forEach((el) => io.observe(el));
-})();
-</script>`;
+  return `<p class="invite">
+    <a href="${esc(invite.href)}"${extra}>${esc(invite.label)} →</a>${lead}
+  </p>`;
 }
 
 export function renderHome(site) {
@@ -219,7 +191,6 @@ ${renderHackathons(hackathons)}
 
 </main>
 
-${header.invite?.href ? `${renderInvite(header.invite, "invite-end")}\n` : ""}
 <footer>
   <p>${esc(footer.line)}</p>
   <p>
@@ -227,7 +198,6 @@ ${header.invite?.href ? `${renderInvite(header.invite, "invite-end")}\n` : ""}
   </p>
 </footer>
 
-${renderAskChip(header.invite)}
 </body>
 </html>
 `;
