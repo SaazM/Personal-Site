@@ -124,6 +124,30 @@ function renderInvite(invite) {
   </p>`;
 }
 
+function renderAskChip(invite) {
+  if (!invite?.href) return "";
+  const extra = isExternal(invite.href)
+    ? ' target="_blank" rel="noopener noreferrer"'
+    : "";
+  return `<a class="ask-chip" href="${esc(invite.href)}"${extra} hidden aria-label="${esc(invite.label)}">Ask me →</a>
+<script>
+(() => {
+  const chip = document.querySelector(".ask-chip");
+  const invites = document.querySelectorAll(".invite");
+  if (!chip || !invites.length || !("IntersectionObserver" in window)) return;
+  const onScreen = new Set();
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      if (e.isIntersecting) onScreen.add(e.target);
+      else onScreen.delete(e.target);
+    }
+    chip.toggleAttribute("hidden", onScreen.size > 0);
+  }, { threshold: 0.35 });
+  invites.forEach((el) => io.observe(el));
+})();
+</script>`;
+}
+
 export function renderHome(site) {
   const { meta, header, experience, projects, writing, hackathons, education, footer } = site;
 
@@ -198,6 +222,7 @@ ${renderHackathons(hackathons)}
   </p>
 </footer>
 
+${renderAskChip(header.invite)}
 </body>
 </html>
 `;
