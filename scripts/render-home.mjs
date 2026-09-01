@@ -216,8 +216,7 @@ ${renderHackathons(hackathons)}
 </main>
 
 <footer>
-  <p>${esc(footer.line)}</p>
-  <p>
+${footer.line?.trim() ? `  <p>${esc(footer.line)}</p>\n` : ""}  <p>
     ${linkList(footer.links)}
   </p>
 </footer>
